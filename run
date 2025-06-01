@@ -1,0 +1,1 @@
+cc gol.c `sdl2-config --cflags --libs` -lm && ./a.out
