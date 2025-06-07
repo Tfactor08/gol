@@ -59,28 +59,18 @@ void render_cells()
             fill_cell(i, j, cells[i][j]);
 }
 
-// TODO
-// there must a better way to manage the edge cases
-int count_neighbours(int row, int col)
+int count_alive_neighbours(int row, int col)
 {
     int alive_cnt = 0;
-    if (row != 0)
-        alive_cnt += cells[row-1][col];
-    if (row != ROWS-1)
-        alive_cnt += cells[row+1][col];
-    if (col != 0)
-        alive_cnt += cells[row][col-1];
-    if (col != COLS-1)
-        alive_cnt += cells[row][col+1];
-    if (!(row == 0 && col == 0))
-        alive_cnt += cells[row-1][col-1];
-    if (!(row == ROWS-1 && col == 0))
-        alive_cnt += cells[row+1][col-1];
-    if (!(row == 0 && col == COLS-1))
-        alive_cnt += cells[row-1][col+1];
-    if (!(row == ROWS-1 && col == COLS-1))
-        alive_cnt += cells[row+1][col+1];
-
+    for (int i = -1; i <= 1; ++i) {
+        for (int j = -1; j <= 1; ++j) {
+            if (i == 0 && j == 0) continue;
+            int nrow = row + i;
+            int ncol = col + j;
+            if (nrow >= 0 && nrow < ROWS && ncol >= 0 && ncol < COLS)
+                alive_cnt += cells[nrow][ncol];
+        }
+    }
     return alive_cnt;
 }
 
@@ -89,7 +79,7 @@ void eval_next_gen()
     char neighbours[ROWS][COLS];
     for (int i = 0; i < ROWS; i++)
         for (int j = 0; j < COLS; j++)
-            neighbours[i][j] = count_neighbours(i, j);
+            neighbours[i][j] = count_alive_neighbours(i, j);
 
     for (int i = 0; i < ROWS; i++)
         for (int j = 0; j < COLS; j++) {
@@ -108,8 +98,7 @@ void eval_next_gen()
 }
 
 // TODO
-// for some reason, cells look streched in the window;
-// refactor count_neighbours().
+// for some reason, cells look streched in the window.
 int main()
 {
     SDL_Init(SDL_INIT_VIDEO);
